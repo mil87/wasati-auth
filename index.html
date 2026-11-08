@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Supabase sends the person here after they open the link in a Wasati
+     confirmation email. The address it arrives with can carry sign-in
+     tokens, so nothing leaves this page: no analytics, no scripts from
+     elsewhere, no referrer, and the tokens are removed from the address
+     bar as soon as the page loads. -->
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Wasati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500&display=swap">
+<style>
+  /* Wasati's own colour tokens (lib/core/theme/app_colors.dart): the dark
+     theme the app opens in, and the light one for a light-mode browser. */
+  :root {
+    --ground: #0F1A15;      /* darkSurfaceSunken */
+    --card: #1A2B23;        /* darkSurfaceRaised */
+    --border: #2D3F36;      /* darkBorder */
+    --text: #F4F1E8;        /* softWhite */
+    --muted: #B9C6BD;
+    --accent: #A8C3B0;      /* sage */
+    --gold: #C7A45B;        /* mutedGold */
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --ground: #F8F4EA;    /* ivory */
+      --card: #FFFBF2;      /* softIvory */
+      --border: #DDE6DD;
+      --text: #17211D;      /* ink */
+      --muted: #48544D;
+      --accent: #1F5F4A;    /* deepGreen */
+      --gold: #8A6A2E;
+      color-scheme: light;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font: 400 17px/1.55 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+             max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  main {
+    width: 100%;
+    max-width: 440px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 36px 28px 32px;
+    text-align: center;
+  }
+  .mark { width: 72px; height: 72px; border-radius: 18px; display: block; margin: 0 auto 24px; }
+  h1 {
+    font: 600 30px/1.2 Fraunces, Georgia, serif;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  p { margin: 0 0 12px; color: var(--muted); }
+  p.lead { color: var(--text); }
+  .steps {
+    text-align: left;
+    margin: 20px 0 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .steps li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; }
+  .steps b {
+    font-weight: 500; color: var(--accent);
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px solid var(--accent); display: grid; place-items: center; font-size: 13px;
+  }
+  .small { font-size: 14px; margin-top: 16px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1024" height="1024" fill="#E8DCC7"/>
+    <circle cx="512" cy="512" r="318" fill="#8B9D83"/>
+    <path d="M278 326H382L426 574L512 356L598 574L642 326H746L642 722H560L512 594L464 722H382L278 326Z" fill="#263025"/>
+    <path d="M384 326H464L512 464L560 326H640L512 644L384 326Z" fill="#E8DCC7"/>
+    <circle cx="512" cy="302" r="46" fill="#C66B3D"/>
+    <path d="M360 756C440 806 584 806 664 756" stroke="#D4B895" stroke-width="54" stroke-linecap="round"/>
+  </svg>
+
+  <section id="confirmed">
+    <h1>Your email is confirmed</h1>
+    <p class="lead">Your Wasati account is ready.</p>
+    <ol class="steps">
+      <li><b>1</b><span>Open Wasati on your phone.</span></li>
+      <li><b>2</b><span>Tap <strong>Log in</strong> and use the email and password you signed up with.</span></li>
+    </ol>
+    <p class="small">You can close this page now.</p>
+  </section>
+
+  <section id="expired" hidden>
+    <h1>This link has already been used</h1>
+    <p class="lead">Confirmation links work once and expire after a while.</p>
+    <p>If you've already confirmed your email, open Wasati on your phone and log in. If you haven't, sign up again in Wasati and we'll send you a fresh link.</p>
+    <p class="small">You can close this page now.</p>
+  </section>
+</main>
+<script>
+  // Supabase reports a used or expired link in the address (error=...).
+  // Everything else in the address, sign-in tokens included, is removed
+  // straight away and never read or sent anywhere.
+  (function () {
+    var where = (location.hash || '') + '&' + (location.search || '');
+    if (/(^|[#&?])error(_code)?=/.test(where)) {
+      document.getElementById('confirmed').hidden = true;
+      document.getElementById('expired').hidden = false;
+    }
+    if (location.hash || location.search) {
+      history.replaceState(null, '', location.pathname);
+    }
+  })();
+</script>
+</body>
+</html>
