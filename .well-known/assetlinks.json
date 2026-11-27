@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.wasati.wasati",
+      "sha256_cert_fingerprints": [
+        "D9:76:D3:03:CE:75:6D:44:12:26:8E:18:4C:7E:D7:1B:37:8A:5E:92:D9:0E:CB:56:84:55:5A:EA:1C:BA:84:E9"
+      ]
+    }
+  }
+]
